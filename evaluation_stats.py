@@ -12,15 +12,15 @@ import evaluation_utils
 from trainer import EvNetModel
 
 
-device = 'cuda:0'
-# device = 'cpu'
+# device = 'cuda:0'
+device = 'cpu'
 
 
-path_model = './pretrained_models/DVS128_10_24ms_dwn/'
+# path_model = './pretrained_models/DVS128_10_24ms_dwn/'
 # path_model = './pretrained_models/DVS128_11_24ms_dwn/'
 # path_model = './pretrained_models/SLAnimals_4s_48ms_dwn/'
 # path_model = './pretrained_models/SLAnimals_3s_48ms_dwn/'
-# path_model = './pretrained_models/ASL_DVS_dwn/'
+path_model = './pretrained_models/ASL_DVS_dwn/'
 
 
 path_weights = evaluation_utils.get_best_weigths(path_model, 'val_acc', 'max')
@@ -59,7 +59,11 @@ def get_complexity_stats(model, all_params):
     for polarity, pixels, labels in tqdm(dl):
         if polarity is None: continue
         polarity, pixels, labels = polarity.to(device), pixels.to(device), labels.to(device)
-        
+        print("pol : ",polarity.shape)
+        #print("pol0 : ", polarity[0])
+        print("pixels: ",pixels.shape)
+        #print("pixel val:", pixels)
+        print("labels : ", labels.shape)
         for ts in range(len(polarity)):
             num_patches = sum(polarity[ts:ts+1].sum(-1).sum(0).sum(0) != 0)
             mask = polarity[ts:ts+1].sum(-1).sum(0).sum(0) != 0

@@ -72,7 +72,7 @@ def process_file_sample(path_dataset, label, f, train_samples):
 label = os.listdir(path_dataset)[0]
 f = os.listdir(os.path.join(path_dataset, label))[0]
 
-Parallel(n_jobs=8)(delayed(process_file_sample)(path_dataset, label, f, train_samples) for label in tqdm(os.listdir(path_dataset)) for f in tqdm(os.listdir(os.path.join(path_dataset, label))))
+Parallel(n_jobs=1)(delayed(process_file_sample)(path_dataset, label, f, train_samples) for label in tqdm(os.listdir(path_dataset)) for f in tqdm(os.listdir(os.path.join(path_dataset, label))))
 
 
 # %%
