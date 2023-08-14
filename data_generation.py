@@ -384,7 +384,7 @@ class Event_DataModule(LightningDataModule):
             for c in classes_to_exclude: del self.class_mapping[c]
             self.class_mapping = { i:l[1] for i,l in enumerate(sorted(self.class_mapping.items(), key=lambda x:x[0])) }
         elif dataset_name == 'ASL_DVS':
-            self.data_folder = './datasets/ICCV2019_DVS_dataset/clean_dataset_frames_2000/'
+            self.data_folder = './datasets/ESW/clean_dataset_frames_1000/'
             self.width, self.height = 240, 180
             self.num_classes = 24
             self.class_mapping = { i:l for i,l in enumerate('a b c d e f g h i k l m n o p q r s t u v w x y'.split()) }
