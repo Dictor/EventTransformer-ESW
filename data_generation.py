@@ -43,7 +43,7 @@ class EventDataset(Dataset):
         self.chunk_len_us = chunk_len_ms*1000
         
         self.sparse_frame_len_us = int(self.samples_folder.split('/')[-3].split('_')[-1])     # len of each loaded sparse frame
-        self.sparse_frame_len_ms = self.sparse_frame_len_us // 1000
+        self.sparse_frame_len_ms = self.sparse_frame_len_us / 1000                  # self.sparse_frame_len_us//1000 -> self.sparse_frame_len_us/1000
         assert  self.chunk_len_us % self.sparse_frame_len_us == 0
         self.chunk_size = self.chunk_len_us // self.sparse_frame_len_us             # Size of the grouped frame chunks
         
@@ -203,13 +203,17 @@ class EventDataset(Dataset):
         
         # Load sparse matrix
         total_events = pickle.load(open(os.path.join(self.samples_folder + filename), 'rb'))  # events (t x H x W x 2)
+        total_pdls = pickle.load(open(os.path.join(self.samples_folder +"../pdl/"+ filename[0:6]+"pedal_"+filename[6:]), 'rb'))  # events (t x H x W x 2)
         
+        acc = total_pdls[0]
+        brk = total_pdls[1]
+
         # Crop sequence to self.num_sparse_frames
         if 'max_sample_len_ms' in self.augmentation_params and self.augmentation_params['max_sample_len_ms'] != -1:
             total_events = self.crop_in_time(total_events)
         if 'random_frame_size' in self.augmentation_params and self.augmentation_params['random_frame_size'] is not None:
             total_events = self.crop_in_space(total_events)
-            
+                  
         if not self.validation and self.h_flip and np.random.rand() > 0.5: total_events = total_events[:,:,::-1,:]
         
             
@@ -281,8 +285,8 @@ class EventDataset(Dataset):
 
         if 'random_shift' in self.augmentation_params and self.augmentation_params['random_shift']:
             total_pixels = self.shift(total_pixels, total_events.shape[1:-1])
-        
-        return total_polarity, total_pixels, label
+            
+        return total_polarity, total_pixels, label, acc, brk      #, acc, brk
             
 
     
@@ -384,7 +388,8 @@ class Event_DataModule(LightningDataModule):
             for c in classes_to_exclude: del self.class_mapping[c]
             self.class_mapping = { i:l[1] for i,l in enumerate(sorted(self.class_mapping.items(), key=lambda x:x[0])) }
         elif dataset_name == 'ASL_DVS':
-            self.data_folder = './datasets/ESW/clean_dataset_frames_1000/'
+            self.data_folder = './datasets/ESW/clean_dataset_1000/'
+            # clean_dataset_frames_1000
             self.width, self.height = 240, 180
             self.num_classes = 24
             self.class_mapping = { i:l for i,l in enumerate('a b c d e f g h i k l m n o p q r s t u v w x y'.split()) }
@@ -412,8 +417,8 @@ class Event_DataModule(LightningDataModule):
 
 
     def custom_collate_fn(self, batch_samples):
-        pols, pixels, labels = [], [], []
-        
+        pols, pixels, labels, acc, brk = [], [], [], [], []
+        # print(batch_samples[0])
         for num_sample, sample in enumerate(batch_samples): 
             # Sample -> time_sequence
             # #samples == batch_size
@@ -426,7 +431,10 @@ class Event_DataModule(LightningDataModule):
             pols.append(sample[0])
             pixels.append(sample[1])
             labels.append(sample[2])
-        
+            # print(sample[3])
+            acc.append(sample[3])
+            brk.append(sample[4])
+
         if len(pols) == 0: return None, None, None
         token_size = pols[0][0].shape[-1]
             
@@ -434,7 +442,8 @@ class Event_DataModule(LightningDataModule):
         pixels = pad_list_of_sequences(pixels, 2, self.pre_padding)
         
         pols, pixels, labels = pols, pixels.long(), torch.tensor(labels).long()
-        return pols, pixels, labels
+        acc, brk = torch.tensor(acc), torch.tensor(brk)
+        return pols, pixels, labels, acc, brk
     
     
     def train_dataloader(self):

@@ -112,6 +112,8 @@ def get_time_accuracy_stats(model, all_params):
         y_true.append(labels[0])
         y_pred.append(clf_logits.argmax())
     y_true, y_pred = torch.stack(y_true).to("cpu"), torch.stack(y_pred).to("cpu")
+    print("pred: ", [t.numpy() for t in y_pred])
+    print("true: ", [t.numpy() for t in y_true])
     acc_score = Accuracy()(y_true, y_pred).item()
     
     logs = evaluation_utils.load_csv_logs_as_df(path_model)
