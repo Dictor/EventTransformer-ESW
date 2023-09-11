@@ -432,17 +432,18 @@ class Event_DataModule(LightningDataModule):
             pixels.append(sample[1])
             labels.append(sample[2])
             # print(sample[3])
-            acc.append(sample[3])
-            brk.append(sample[4])
+            acc.append(sum(sample[3])/len(sample[3]))
+            brk.append(sum(sample[4])/len(sample[4]))
 
         if len(pols) == 0: return None, None, None
         token_size = pols[0][0].shape[-1]
             
         pols = pad_list_of_sequences(pols, token_size, self.pre_padding)
         pixels = pad_list_of_sequences(pixels, 2, self.pre_padding)
-        
+
+
         pols, pixels, labels = pols, pixels.long(), torch.tensor(labels).long()
-        acc, brk = torch.tensor(acc), torch.tensor(brk)
+        acc, brk = torch.tensor(acc).double(), torch.tensor(brk).double()
         return pols, pixels, labels, acc, brk
     
     
