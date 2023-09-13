@@ -4,7 +4,7 @@ import time
 import os
 import keyboard
 
-acc_f = open("highway5_acc_test.txt",'w')
+acc_f = open("street5_acc_test.txt",'w')
 sys.path.append('../logidrivepy')
 controller = LogitechController()
 steering_initialize = controller.steering_initialize()
