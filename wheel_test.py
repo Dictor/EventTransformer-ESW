@@ -2,8 +2,9 @@ from logidrivepy import LogitechController
 import sys
 import time
 import os
+import keyboard
 
-
+acc_f = open("highway5_acc_test.txt",'w')
 sys.path.append('../logidrivepy')
 controller = LogitechController()
 steering_initialize = controller.steering_initialize()
@@ -22,8 +23,9 @@ else:
     exit 
 
 controller.steering_initialize()
-for i in range(0, 20):
-    time.sleep(0.5)
+# for i in range(0, 20):
+while(1):
+    # time.sleep(0.001)
     # prop = controller.get_state_engines(0).contents
     try:
         controller.logi_update()
@@ -31,7 +33,14 @@ for i in range(0, 20):
     except:
         print("except")
         continue
-    print("{} {} {}".format(prop.lX, prop.lY, prop.lRz))
-        # lX : wheel, lY: accel, lRz : brake
+    print("{} {:.6f} {:.6f}".format(prop.lX, 1-(prop.lY+pow(2,15))/pow(2,16), 1-(prop.lRz+pow(2,15))/pow(2,16)))
+    # lX : wheel, lY: accel, lRz : brakespip instal
+    acc_f.write("{:.6f}".format(1-(prop.lY+pow(2,15))/pow(2,16)))
+    acc_f.write(' ')
+    acc_f.write("{:.6f}".format(1-(prop.lRz+pow(2,15))/pow(2,16)))
+    acc_f.write('\n')
+    if keyboard.is_pressed("1"):
+        break
 
 controller.steering_shutdown()
+acc_f.close()
