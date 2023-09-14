@@ -24,7 +24,7 @@ path_model = './pretrained_models/ASL_DVS_dwn/'
 
 
 path_weights = evaluation_utils.get_best_weigths(path_model, 'val_acc', 'max')
-evaluation_utils.plot_training_evolution(path_model)
+#evaluation_utils.plot_training_evolution(path_model)
 all_params = json.load(open(path_model + '/all_params.json', 'r'))
 model = EvNetModel.load_from_checkpoint(path_weights, map_location=torch.device('cpu'), **all_params).eval().to(device)
 
@@ -56,6 +56,7 @@ def get_complexity_stats(model, all_params):
     
     total_flops, total_macs, total_params, total_act_patches = [], [], [], []
     total_time_flops = []
+    print("folder : {}".format(dl.dataset.samples_folder))
     for polarity, pixels, labels in tqdm(dl):
         if polarity is None: continue
         polarity, pixels, labels = polarity.to(device), pixels.to(device), labels.to(device)
@@ -112,6 +113,7 @@ def get_time_accuracy_stats(model, all_params):
         y_true.append(labels[0])
         y_pred.append(clf_logits.argmax())
     y_true, y_pred = torch.stack(y_true).to("cpu"), torch.stack(y_pred).to("cpu")
+    print("pred: ", [t.numpy() for t in y_pred])
     acc_score = Accuracy()(y_true, y_pred).item()
     
     logs = evaluation_utils.load_csv_logs_as_df(path_model)
