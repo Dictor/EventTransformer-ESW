@@ -7,6 +7,7 @@ import json
 from tqdm import tqdm
 import time
 import numpy as np
+import pickle
 
 import evaluation_utils
 from trainer import EvNetModel
@@ -103,22 +104,31 @@ def get_time_accuracy_stats(model, all_params):
         
     total_time = []
     y_true, y_pred = [], []
+    latents = []
     for polarity, pixels, labels in tqdm(dl):
         if polarity is None: continue
         polarity, pixels, labels = polarity.to(device), pixels.to(device), labels.to(device)
         t = time.time()
-        embs, clf_logits = model(polarity, pixels)
+        embs, clf_logits, latent = model(polarity, pixels) # embs is compressed latent, latent is original latent
         total_time.append((time.time() - t)/len(polarity))
         
         y_true.append(labels[0])
         y_pred.append(clf_logits.argmax())
+        latents.append(latent)
     y_true, y_pred = torch.stack(y_true).to("cpu"), torch.stack(y_pred).to("cpu")
     print("pred: ", [t.numpy() for t in y_pred])
     acc_score = Accuracy()(y_true, y_pred).item()
     
     logs = evaluation_utils.load_csv_logs_as_df(path_model)
     train_acc = logs[~logs['val_acc'].isna()]['val_acc'].max()
-
+    result = {
+        'embs' : embs,
+        'latent' : latent,
+        'pred' : y_pred
+    }
+    with open('result.pick', 'wb') as f:
+        pickle.dump(result, f, pickle.HIGHEST_PROTOCOL)
+    
     return np.mean(total_time)*1000, train_acc, acc_score
 
 print('\n\n ** Calculating time and accuracy statistics')

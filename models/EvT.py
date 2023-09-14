@@ -280,10 +280,10 @@ class EvNetBackbone(nn.Module):
             # Update latent_vectors
             latent_vectors = inp_q + latent_vectors
         
-        embs = inp_q if self.return_last_q else latent_vectors
-        res = self.proc_embs_block(embs)
+        latent = inp_q if self.return_last_q else latent_vectors
+        res = self.proc_embs_block(latent)
         
-        return res
+        return res, latent
 
 
 # Classification backbone
