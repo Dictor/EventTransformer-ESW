@@ -104,17 +104,18 @@ def get_time_accuracy_stats(model, all_params):
         
     total_time = []
     y_true, y_pred = [], []
-    latents = []
+    latents, embs = [], []
     for polarity, pixels, labels in tqdm(dl):
         if polarity is None: continue
         polarity, pixels, labels = polarity.to(device), pixels.to(device), labels.to(device)
         t = time.time()
-        embs, clf_logits, latent = model(polarity, pixels) # embs is compressed latent, latent is original latent
+        emb, clf_logits, latent = model(polarity, pixels) # embs is compressed latent, latent is original latent
         total_time.append((time.time() - t)/len(polarity))
         
         y_true.append(labels[0])
         y_pred.append(clf_logits.argmax())
         latents.append(latent)
+        embs.append(emb)
     y_true, y_pred = torch.stack(y_true).to("cpu"), torch.stack(y_pred).to("cpu")
     print("pred: ", [t.numpy() for t in y_pred])
     acc_score = Accuracy()(y_true, y_pred).item()
@@ -123,7 +124,7 @@ def get_time_accuracy_stats(model, all_params):
     train_acc = logs[~logs['val_acc'].isna()]['val_acc'].max()
     result = {
         'embs' : embs,
-        'latent' : latent,
+        'latents' : latents,
         'pred' : y_pred
     }
     with open('result.pick', 'wb') as f:
