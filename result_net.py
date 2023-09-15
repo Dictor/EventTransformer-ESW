@@ -1,5 +1,6 @@
 import torch
 import pickle
+from torchsummary import summary
 
 class PedalKeeperNet(torch.nn.Module):
     def __init__(self) -> None:
@@ -29,7 +30,7 @@ class PedalKeeperNet(torch.nn.Module):
         # FC
         # input : 128 channel * embs/4 height
         # output : 1 acc + 1 brk
-        self.fc = torch.nn.Linear(128 * (embs / 4), 2)
+        self.fc = torch.nn.Linear(128 * int(embs / 4), 2)
 
         torch.nn.init.xavier_uniform_(self.fc.weight)
 
@@ -46,33 +47,40 @@ if device == 'cuda':
     torch.cuda.manual_seed_all(777)
 print("현재 device : {}".format(device))
 
+
 learning_rate = 0.001
 training_epochs = 30
 
 model = PedalKeeperNet().to(device)
-criterion = torch.nn.CrossEntropyLoss().to(device)
+summary(model, ( 1, 128))
+criterion = torch.nn.MSELoss().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 f = open('result.pckl', 'rb')
 result = pickle.load(f)
+f = open('result_pedal.pckl', 'rb')
+result_pedal = pickle.load(f)
+
 batch = len(result['embs'])
 
 print("총 학습 데이터 {0}개".format(batch))
 
+
 for epoch in range(training_epochs):
     avg_cost = 0
-
-    for current_set in range(result['embs']):
+    i = 0
+    
+    for current_set in result['embs']:
         x = current_set
         x = x.unsqueeze(1)
-        y = 0
-        _, y = y.max(dim=1)
+        y = torch.tensor([[result_pedal['accs'][i], result_pedal['brks'][i]]], dtype=torch.float32)
         
         optimizer.zero_grad()
         hypothesis = model(x)
-        cost = criterion(hypothesis, y)
+        cost = criterion(hypothesis, y).float()
         cost.backward()
         optimizer.step()
         avg_cost += cost / batch
+        i += 1
     
     print('[Epoch: {:>4}] cost = {:>.9}'.format(epoch + 1, avg_cost))
