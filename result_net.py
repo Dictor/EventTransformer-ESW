@@ -1,6 +1,8 @@
 import torch
 import pickle
 from torchsummary import summary
+import math
+from matplotlib import pyplot as plt
 
 class PedalKeeperNet(torch.nn.Module):
     def __init__(self) -> None:
@@ -62,16 +64,19 @@ f = open('result_pedal.pckl', 'rb')
 result_pedal = pickle.load(f)
 
 batch = len(result['embs'])
+train_set_ratio = 0.75
+train_set_len = int(math.floor(batch * train_set_ratio))
+test_set_len = batch - train_set_len
 
-print("총 학습 데이터 {0}개".format(batch))
+print("총 학습 데이터 {0}개, train {1}개".format(batch, train_set_len))
 
-
+evaluation_result = {"train": [], "test": []}
 for epoch in range(training_epochs):
-    avg_cost = 0
-    i = 0
+    avg_train_cost = 0
+    avg_test_cost = 0
     
-    for current_set in result['embs']:
-        x = current_set
+    for i in range(train_set_len):
+        x = result['embs'][i]
         x = x.unsqueeze(1)
         y = torch.tensor([[result_pedal['accs'][i], result_pedal['brks'][i]]], dtype=torch.float32)
         
@@ -80,7 +85,26 @@ for epoch in range(training_epochs):
         cost = criterion(hypothesis, y).float()
         cost.backward()
         optimizer.step()
-        avg_cost += cost / batch
-        i += 1
+        avg_train_cost += cost / batch
     
-    print('[Epoch: {:>4}] cost = {:>.9}'.format(epoch + 1, avg_cost))
+    with torch.no_grad():
+        model.eval()
+        test_loss = 0
+
+        for i in range(test_set_len):
+            x = result['embs'][train_set_len + i].to(device).float()
+            x = x.unsqueeze(1)
+            y = torch.tensor([[result_pedal['accs'][train_set_len + i], result_pedal['brks'][train_set_len + i]]], dtype=torch.float32)
+            output = model(x)
+            cost = criterion(output, y).float()
+            test_loss += cost
+
+        avg_test_cost = test_loss / test_set_len
+    
+    print('[Epoch: {:>4}] train cost = {:>.9}   test cost = {:>.9}'.format(epoch + 1, avg_train_cost, avg_test_cost))
+    evaluation_result['test'].append(avg_test_cost.item())
+    evaluation_result['train'].append(avg_train_cost.item())
+    
+plt.plot(range(training_epochs), evaluation_result['train'], evaluation_result['test'])
+plt.legend(('train loss', 'test loss'))
+plt.show()
