@@ -127,7 +127,7 @@ def get_time_accuracy_stats(model, all_params):
         'latents' : latents,
         'pred' : y_pred
     }
-    with open('result.pick', 'wb') as f:
+    with open('result.pckl', 'wb') as f:
         pickle.dump(result, f, pickle.HIGHEST_PROTOCOL)
     
     return np.mean(total_time)*1000, train_acc, acc_score
