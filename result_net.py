@@ -58,9 +58,10 @@ summary(model, ( 1, 128))
 criterion = torch.nn.MSELoss().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-f = open('result.pckl', 'rb')
+path = input("give pickle directory : ")
+f = open(path + '/result.pckl', 'rb')
 result = pickle.load(f)
-f = open('result_pedal.pckl', 'rb')
+f = open(path + '/result_pedal.pckl', 'rb')
 result_pedal = pickle.load(f)
 
 batch = len(result['embs'])
