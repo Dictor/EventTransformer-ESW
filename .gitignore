@@ -133,3 +133,4 @@ dmypy.json
 datasets/*
 .vscode/
 pretrained_models/
+*.pckl
