@@ -1,5 +1,5 @@
 import torch
-import pickle
+import pickle5 as pickle
 from torchsummary import summary
 import math
 from matplotlib import pyplot as plt
@@ -16,7 +16,7 @@ class PedalKeeperNet(torch.nn.Module):
         self.layer1 = torch.nn.Sequential(
             torch.nn.Conv1d(1, 64, 3, padding=1),
             torch.nn.ReLU(),
-            torch.nn.MaxPool1d(2, 2)
+            torch.nn.AvgPool1d(2, 2)
         )
 
         # L2
@@ -26,15 +26,20 @@ class PedalKeeperNet(torch.nn.Module):
         self.layer2 = torch.nn.Sequential(
             torch.nn.Conv1d(64, 128, 3, padding=1),
             torch.nn.ReLU(),
-            torch.nn.MaxPool1d(2, 2)
+            torch.nn.AvgPool1d(2, 2)
         )
 
         # FC
         # input : 128 channel * embs/4 height
         # output : 1 acc + 1 brk
-        self.fc = torch.nn.Linear(128 * int(embs / 4), 2)
+        self.fc = torch.nn.Sequential(
+            torch.nn.Linear(128 * int(embs / 4),  1024),
+            torch.nn.ReLU(),
+            torch.nn.Linear(1024, 2)
+        )
 
-        torch.nn.init.xavier_uniform_(self.fc.weight)
+        torch.nn.init.xavier_uniform_(self.fc[0].weight)
+        torch.nn.init.xavier_uniform_(self.fc[2].weight)
 
     def forward(self, x):
         out = self.layer1(x)
