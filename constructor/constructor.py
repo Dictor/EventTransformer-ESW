@@ -65,7 +65,7 @@ while(True):
     print(output_coo.shape)
     print(output_coo.coords) 
     print(output_pdl_np.shape)
-    print(output_pdl_np[0])
+    # print(output_pdl_np[0])
     with open("./output/"+out_file_name+str(files)+".pckl","wb") as fw:
         pickle.dump(output_coo, fw)
     with open("./output/"+out_file_name+"pedal_"+str(files)+".pckl","wb") as fw:
