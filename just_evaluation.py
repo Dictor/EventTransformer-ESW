@@ -57,16 +57,16 @@ def get_complexity_stats(model, all_params):
     total_flops, total_macs, total_params, total_act_patches = [], [], [], []
     total_time_flops = []
     print("folder : {}".format(dl.dataset.samples_folder))
-    for polarity, pixels, labels, acc, brk in tqdm(dl):   #, acc, brk
+    for polarity, pixels, labels in tqdm(dl):   #, acc, brk
         if polarity is None: continue
-        polarity, pixels, labels, acc, brk = polarity.to(device), pixels.to(device), labels.to(device), acc.to(device), brk.to(device)
+        polarity, pixels, labels = polarity.to(device), pixels.to(device), labels.to(device)
         print("pol : ",polarity.shape)
         print("pol0 : ", polarity[0])
         print("pixels: ",pixels.shape)
         print("pixel val:", pixels)
         # print("labels : ", labels.shape)
-        print("acc : ", acc.shape)
-        print("brk : ", brk.shape)
+        # print("acc : ", acc.shape)
+        # print("brk : ", brk.shape)
         for ts in range(len(polarity)):
             num_patches = sum(polarity[ts:ts+1].sum(-1).sum(0).sum(0) != 0)
             mask = polarity[ts:ts+1].sum(-1).sum(0).sum(0) != 0
@@ -105,9 +105,9 @@ def get_time_accuracy_stats(model, all_params):
         
     total_time = []
     y_true, y_pred = [], []
-    for polarity, pixels, labels, acc, brk  in tqdm(dl):
+    for polarity, pixels, labels in tqdm(dl):
         if polarity is None: continue
-        polarity, pixels, labels, acc, brk = polarity.to(device), pixels.to(device), labels.to(device), acc.to(device), brk.to(device)
+        polarity, pixels, labels = polarity.to(device), pixels.to(device), labels.to(device)
         t = time.time()
         embs, clf_logits = model(polarity, pixels)
         total_time.append((time.time() - t)/len(polarity))
