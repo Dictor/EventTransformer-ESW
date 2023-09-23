@@ -221,9 +221,9 @@ class EventDataset(Dataset):
 
 
         if sum(acc)/len(acc)<0.05 and sum(brk)/len(brk)<0.05:
-            label = 0 
+            label = 1 
         elif sum(acc)/len(acc) > sum(brk)/len(brk):
-            label = 1
+            label = 0
         elif sum(acc)/len(acc) < sum(brk)/len(brk):
             label = 2   
 
