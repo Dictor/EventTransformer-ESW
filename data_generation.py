@@ -199,7 +199,7 @@ class EventDataset(Dataset):
     def __getitem__(self, idx, return_sparse_array=False):
 
         filename = self.samples[idx]
-        label = self.labels[idx]
+        # label = self.labels[idx]
         
         # Load sparse matrix
         total_events = pickle.load(open(os.path.join(self.samples_folder + filename), 'rb'))  # events (t x H x W x 2)
@@ -218,7 +218,18 @@ class EventDataset(Dataset):
         
             
         total_pixels, total_polarity = [], []
+
+
+        if sum(acc)/len(acc)<0.05 and sum(brk)/len(brk)<0.05:
+            label = 1 
+        elif sum(acc)/len(acc) > sum(brk)/len(brk):
+            label = 0
+        elif sum(acc)/len(acc) < sum(brk)/len(brk):
+            label = 2   
+
+
         current_chunk = None
+
 
         # Iterate until read all the total_events (max_sample_len_ms)
         sf_num = len(total_events) - 1
@@ -286,7 +297,7 @@ class EventDataset(Dataset):
         if 'random_shift' in self.augmentation_params and self.augmentation_params['random_shift']:
             total_pixels = self.shift(total_pixels, total_events.shape[1:-1])
             
-        return total_polarity, total_pixels, label, acc, brk      #, acc, brk
+        return total_polarity, total_pixels, label      #, acc, brk
             
 
     
@@ -417,7 +428,7 @@ class Event_DataModule(LightningDataModule):
 
 
     def custom_collate_fn(self, batch_samples):
-        pols, pixels, labels, acc, brk = [], [], [], [], []
+        pols, pixels, labels = [], [], []
         # print(batch_samples[0])
         for num_sample, sample in enumerate(batch_samples): 
             # Sample -> time_sequence
@@ -432,8 +443,8 @@ class Event_DataModule(LightningDataModule):
             pixels.append(sample[1])
             labels.append(sample[2])
             # print(sample[3])
-            acc.append(sum(sample[3])/len(sample[3]))
-            brk.append(sum(sample[4])/len(sample[4]))
+            # acc.append(sum(sample[3])/len(sample[3]))
+            # brk.append(sum(sample[4])/len(sample[4]))
 
         if len(pols) == 0: return None, None, None
         token_size = pols[0][0].shape[-1]
@@ -443,8 +454,8 @@ class Event_DataModule(LightningDataModule):
 
 
         pols, pixels, labels = pols, pixels.long(), torch.tensor(labels).long()
-        acc, brk = torch.tensor(acc).double(), torch.tensor(brk).double()
-        return pols, pixels, labels, acc, brk
+        # acc, brk = torch.tensor(acc).double(), torch.tensor(brk).double()
+        return pols, pixels, labels                     #, acc, brk
     
     
     def train_dataloader(self):
