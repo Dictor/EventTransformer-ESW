@@ -5,7 +5,7 @@ import json
 path_results = 'pretrained_models'
 
 # Load params with the parameters reported in the article for each dataset
-train_params = json.load(open('./pretrained_models/DVS128_10_24ms/all_params.json', 'r'))
+train_params = json.load(open('./pretrained_models/ESW/all_params.json', 'r'))
 # train_params = json.load(open('./pretrained_models/DVS128_11_24ms/all_params.json', 'r'))
 # train_params = json.load(open('./pretrained_models/SLAnimals_3s_48ms/all_params.json', 'r'))
 # train_params = json.load(open('./pretrained_models/SLAnimals_4s_48ms/all_params.json', 'r'))

@@ -399,11 +399,16 @@ class Event_DataModule(LightningDataModule):
             for c in classes_to_exclude: del self.class_mapping[c]
             self.class_mapping = { i:l[1] for i,l in enumerate(sorted(self.class_mapping.items(), key=lambda x:x[0])) }
         elif dataset_name == 'ASL_DVS':
-            self.data_folder = './datasets/ESW/clean_dataset_1000/'
+            self.data_folder = './datasets/ASL_DVS/clean_dataset_1000/'
             # clean_dataset_frames_1000
             self.width, self.height = 240, 180
             self.num_classes = 24
             self.class_mapping = { i:l for i,l in enumerate('a b c d e f g h i k l m n o p q r s t u v w x y'.split()) }
+        elif dataset_name == 'ESW':
+            self.data_folder = './datasets/ESW/clean_dataset_1000/'
+            self.width, self.height = 240, 180
+            self.num_classes = 3
+            self.class_mapping = { i:l for i,l in enumerate('N A B'.split()) } # N = neutral, A = accel, B = brake
         elif dataset_name == 'SLAnimals_3s':
             self.data_folder = './datasets/SL_animal_splits/dataset_3sets_12000/'
             self.width, self.height = 128, 128
