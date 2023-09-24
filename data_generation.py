@@ -90,7 +90,7 @@ class EventDataset(Dataset):
             self.unique_labels = { l:i for i,l in enumerate(sorted(set(self.labels))) }
             self.labels = [ self.unique_labels[l] for l in self.labels ]
             self.num_classes = len(self.unique_labels)
-        elif dataset_name in ['ASL_DVS', 'HMDB', 'UCF101', 'UCF50', 'SLAnimals_4s', 'SLAnimals_3s', 'N_Cars', 'Caltech']:
+        elif dataset_name in ['ASL_DVS', 'HMDB', 'UCF101', 'UCF50', 'SLAnimals_4s', 'SLAnimals_3s', 'N_Cars', 'Caltech', 'ESW']:
             self.labels = [ s.split('_')[-1][:-5] for s in self.samples ]
             self.unique_labels = { l:i for i,l in enumerate(sorted(set(self.labels))) }
             self.labels = [ self.unique_labels[l] for l in self.labels ]
@@ -203,7 +203,8 @@ class EventDataset(Dataset):
         
         # Load sparse matrix
         total_events = pickle.load(open(os.path.join(self.samples_folder + filename), 'rb'))  # events (t x H x W x 2)
-        total_pdls = pickle.load(open(os.path.join(self.samples_folder +"../pdl/"+ filename[0:6]+"pedal_"+filename[6:]), 'rb'))  # events (t x H x W x 2)
+        filenametok = filename.split("_")
+        total_pdls = pickle.load(open(os.path.join(self.samples_folder +"../pdl/"+ filenametok[0]+"_pedal_"+ filenametok[1]), 'rb'))  # events (t x H x W x 2)
         
         acc = total_pdls[0]
         brk = total_pdls[1]
