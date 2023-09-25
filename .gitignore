@@ -132,8 +132,8 @@ dmypy.json
 
 datasets/*
 .vscode/
-pretrained_models/*
 *.pckl
 ml_results/*
 trash_can/*
 lightning-test/*
+pretrained_models/tests
