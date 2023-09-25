@@ -13,7 +13,7 @@ from data_generation import Event_DataModule
 import evaluation_utils
 
 from pytorch_lightning.callbacks import EarlyStopping, LearningRateMonitor, ModelCheckpoint
-from pytorch_lightning.loggers import CSVLogger
+from pytorch_lightning.loggers import CSVLogger,TensorBoardLogger
 import training_utils
 import json
 import pandas as pd
@@ -137,6 +137,11 @@ def train(folder_name, path_results, data_params, backbone_params, clf_params,
     if 'csv' in logger_params: 
         logger_params['csv']['save_dir'] = logger_params['csv']['save_dir'].format(path_model)
         loggers.append(CSVLogger(**logger_params['csv']))
+    
+    if 'tensorboard' in logger_params:
+        print("======= Tensorboard Support ========")
+        logger_params['tensorboard']['save_dir'] = logger_params['tensorboard']['save_dir'].format(path_model)
+        loggers.append(TensorBoardLogger(**logger_params['tensorboard']))
 
     
     # =============================================================================
