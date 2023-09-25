@@ -4,7 +4,7 @@
         "sample_repetitions": 2,
         "chunk_len_ms": 100,
         "classes_to_exclude": null,
-        "workers": 0,
+        "workers": 8,
         "preproc_polarity": "log",
         "pin_memory": true,
         "patch_size": 6,
@@ -92,8 +92,7 @@
         ]
     },
     "training_params": {
-        "accelerator": "auto",
-
+        "gpus": 1,
         "log_every_n_steps": 1000,
         "accumulate_grad_batches": 1,
         "stochastic_weight_avg": true,
@@ -136,7 +135,7 @@
             {
                 "monitor": "val_loss_total",
                 "mode": "min",
-                "dirpath": "./ml_results/evnet/new_ablation_018_objRec_byms/ASL_DVS//000/1116_2350_model_0//weights/",
+                "dirpath": "./ml_results/weights/",
                 "filename": "{epoch}-{val_loss_total:.5f}-{val_loss_clf:.5f}-{val_acc:.5f}",
                 "save_last": false,
                 "save_weights_only": false,
@@ -150,7 +149,7 @@
             {
                 "monitor": "val_loss_clf",
                 "mode": "min",
-                "dirpath": "./ml_results/evnet/new_ablation_018_objRec_byms/ASL_DVS//000/1116_2350_model_0//weights/",
+                "dirpath": "./ml_results/weights/",
                 "filename": "{epoch}-{val_loss_total:.5f}-{val_loss_clf:.5f}-{val_acc:.5f}",
                 "save_last": false,
                 "save_weights_only": false,
@@ -164,7 +163,7 @@
             {
                 "monitor": "val_acc",
                 "mode": "max",
-                "dirpath": "./ml_results/evnet/new_ablation_018_objRec_byms/ASL_DVS//000/1116_2350_model_0//weights/",
+                "dirpath": "./ml_results/weights/",
                 "filename": "{epoch}-{val_loss_total:.5f}-{val_loss_clf:.5f}-{val_acc:.5f}",
                 "save_last": false,
                 "save_weights_only": false,
@@ -174,9 +173,14 @@
             }
         ]
     ],
-    "logger_params": {
-        "csv": {
-            "save_dir": "./ml_results/evnet/new_ablation_018_objRec_byms/ASL_DVS//000/1116_2350_model_0/",
+    "logger_params": 
+    {
+        "csv":{
+            "save_dir": "./ml_results/csv",
+            "name": "train_log"
+        },
+        "tensorboard":{
+            "save_dir": "./ml_results/tensorboard_logs",
             "name": "train_log"
         }
     }
