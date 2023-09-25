@@ -441,8 +441,7 @@ class Event_DataModule(LightningDataModule):
             # #samples == batch_size
             
             if sample is None or len(sample[0]) == 0: 
-                print('Empty sample')
-                print(len(sample), len(sample[0]))
+                #print('Empty sample : {}')
                 continue
             
             pols.append(sample[0])
