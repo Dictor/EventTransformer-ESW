@@ -19,6 +19,9 @@ for k,v in train_params['callbacks_params']:
 
 # train_params['data_params']['batch_size'] = 4
 
+import torch.multiprocessing
+torch.multiprocessing.set_sharing_strategy('file_system')
+
 path_model = train('/tests', path_results, 
                                data_params = train_params['data_params'], 
                                backbone_params = train_params['backbone_params'],
