@@ -1,12 +1,12 @@
 {
     "data_params": {
-        "batch_size": 128,
+        "batch_size": 256,
         "sample_repetitions": 2,
         "chunk_len_ms": 100,
         "classes_to_exclude": null,
-        "workers": 8,
+        "workers": 0,
         "preproc_polarity": "log",
-        "pin_memory": true,
+        "pin_memory": false,
         "patch_size": 6,
         "min_activations_per_patch": 0.075,
         "bins": 2,
@@ -93,7 +93,7 @@
     },
     "training_params": {
         "gpus": 1,
-        "log_every_n_steps": 1000,
+        "log_every_n_steps": 100,
         "accumulate_grad_batches": 1,
         "stochastic_weight_avg": true,
         "gradient_clip_val": 0.5,

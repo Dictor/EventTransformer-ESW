@@ -18,6 +18,8 @@ for k,v in train_params['callbacks_params']:
 
 
 # train_params['data_params']['batch_size'] = 4
+# train_params['training_params']['profiler'] = 'advanced'
+train_params['data_params']['pin_memory'] = False
 
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')

@@ -227,6 +227,9 @@ class EventDataset(Dataset):
             label = 0
         elif sum(acc)/len(acc) < sum(brk)/len(brk):
             label = 2   
+        else:
+            label = 1
+            #print("ambiguous pedal data, cannot assign label: avg acc={}, avg brk={}".format(sum(acc)/len(acc), sum(brk)/len(brk)))
 
 
         current_chunk = None
