@@ -234,7 +234,7 @@ class EvNetBackbone(nn.Module):
     # input -> (#timesteps, batch_size, #events, token_dim/event_xy)
     def forward(self, kv, pixels):
         
-        pixels = pixels // self.downsample_pos_enc
+        pixels = torch.div(pixels, self.downsample_pos_enc, rounding_mode='trunc') #pixels//self.downsample_pos_enc
         
         batch_size = kv.shape[1]
         num_time_steps = kv.shape[0]

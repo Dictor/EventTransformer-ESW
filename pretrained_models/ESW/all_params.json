@@ -86,7 +86,7 @@
         "num_latent_vectors": 96
     },
     "clf_params": {
-        "opt_classes": 24,
+        "opt_classes": 3,
         "lvl_embs": [
             -1
         ]

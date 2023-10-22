@@ -42,7 +42,7 @@ class EventDataset(Dataset):
         self.chunk_len_ms = chunk_len_ms
         self.chunk_len_us = chunk_len_ms*1000
         
-        self.sparse_frame_len_us = int(self.samples_folder.split('/')[-3].split('_')[-1])     # len of each loaded sparse frame
+        self.sparse_frame_len_us = 1000 #int(self.samples_folder.split('/')[-3].split('_')[-1])     # len of each loaded sparse frame
         self.sparse_frame_len_ms = self.sparse_frame_len_us / 1000                  # self.sparse_frame_len_us//1000 -> self.sparse_frame_len_us/1000
         assert  self.chunk_len_us % self.sparse_frame_len_us == 0
         self.chunk_size = self.chunk_len_us // self.sparse_frame_len_us             # Size of the grouped frame chunks
@@ -409,7 +409,7 @@ class Event_DataModule(LightningDataModule):
             self.num_classes = 24
             self.class_mapping = { i:l for i,l in enumerate('a b c d e f g h i k l m n o p q r s t u v w x y'.split()) }
         elif dataset_name == 'ESW':
-            self.data_folder = './datasets/ESW/clean_dataset_1000/'
+            self.data_folder = './datasets/ESW/back6/'
             self.width, self.height = 240, 180
             self.num_classes = 3
             self.class_mapping = { i:l for i,l in enumerate('N A B'.split()) } # N = neutral, A = accel, B = brake
@@ -463,7 +463,7 @@ class Event_DataModule(LightningDataModule):
 
         pols, pixels, labels = pols, pixels.long(), torch.tensor(labels).long()
         # acc, brk = torch.tensor(acc).double(), torch.tensor(brk).double()
-        return pols, pixels, labels                     #, acc, brk
+        return (pols, pixels), labels                    #, acc, brk
     
     
     def train_dataloader(self):
