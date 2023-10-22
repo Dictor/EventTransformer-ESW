@@ -9,7 +9,6 @@ from models.positional_encoding import fourier_features
 
 import os
 import copy
-import numpy
 
 
 
@@ -161,9 +160,6 @@ class LatentEmbsCompressor(nn.Module):
         return z    
 
   
-
-def tuple_of_tensors_to_tensor(tuple_of_tensors):
-    return  torch.stack(list(tuple_of_tensors), dim=0)
 # =============================================================================
 # Backbone
 # =============================================================================
@@ -234,16 +230,12 @@ class EvNetBackbone(nn.Module):
         proc_embs['params']['embed_dim'] = embed_dim
         self.proc_embs_block = LatentEmbsCompressor(**proc_embs)
 
-    
+
     # input -> (#timesteps, batch_size, #events, token_dim/event_xy)
     def forward(self, kv, pixels):
         
-        pixels = torch.div(pixels, self.downsample_pos_enc, rounding_mode='trunc') #pixels//self.downsample_pos_enc
-        # if type(kv) == tuple:
-        #     kv = torch.tensor(kv) 
-        #     print(type(kv))
-            
-        # print(type(kv))
+        pixels = pixels // self.downsample_pos_enc
+        
         batch_size = kv.shape[1]
         num_time_steps = kv.shape[0]
         # True to ignore empty patches    |   (#timesteps, batch_size, #events)    

@@ -58,7 +58,7 @@ class EvNetModel(LightningModule):
         embs = self.backbone(x, pixels)
         # Get latent vectors classification
         clf_logits = torch.stack([ self.models_clf[str(0)](embs) ]).mean(axis=0)
-        return clf_logits #embs, clf_logits
+        return embs, clf_logits
     
         
     def configure_optimizers(self):

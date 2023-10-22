@@ -463,7 +463,7 @@ class Event_DataModule(LightningDataModule):
 
         pols, pixels, labels = pols, pixels.long(), torch.tensor(labels).long()
         # acc, brk = torch.tensor(acc).double(), torch.tensor(brk).double()
-        return (pols, pixels), labels                    #, acc, brk
+        return pols, pixels, labels                     #, acc, brk
     
     
     def train_dataloader(self):
