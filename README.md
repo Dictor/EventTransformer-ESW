@@ -1,72 +1,48 @@
-[[Paper](https://arxiv.org/abs/2204.03355)] [[Supplementary video](https://drive.google.com/file/d/1X4OviJTxTUbi2W0zQYKG3qqtEUf98a0p/view?usp=sharing)]
+# 페달키퍼
 
-This repository contains the official code from __Event Transformer. A sparse-aware solution for efficient event data processing__. 
+[![데모 비디오](http://img.youtube.com/vi/y_dw6AWiR-8/0.jpg)](https://youtube.com/shorts/y_dw6AWiR-8)
 
-Event Transformer (EvT) takes advantage of the event-data sparsity to increase its efficiency. EvT usses a new sparse patch-based event-data representation and a compact transformer architecture that naturally processes it. EvT shows high classification accuracy while requiring minimal computation resources, being able to work with minimal latency both in GPU and CPU. 
+이 저장소는 2023 임베디드 경진대회 결선 참여를 위한 코드가 정리된 곳입니다.
 
-<p align="center">
-  <img width="600" src="model_overview_v6.png">
-</p>
+데이터의 전처리, 모델 학습 및 로드를 위한 코드가 제공됩니다.
 
-#### Citation:
-```
-@InProceedings{Sabater_2022_CVPR,
-    author    = {Sabater, Alberto and Montesano, Luis and Murillo, Ana C.},
-    title     = {Event Transformer. A sparse-aware solution for efficient event data processing},
-    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
-    month     = {June},
-    year      = {2022},
-}
-```
+## 라즈베리 파이
+### 준비물 (권장)
+- **64GB** 이상의 Micro SD Card
+- Raspberry Pi 4, **RAM 8GB**
+- [페달키퍼 라즈베리파이 이미지](https://drive.google.com/file/d/1sKXNzsizAHgauqctyeqQG7Tr2sQhtBi8/view?usp=drive_link)
 
+### 소개
+이 저장소에서는 라즈베리파이의 골치아픈 Dependency 설치 문제를 해결하기 위해, 모든 것이 미리 세팅된 라즈베리파이 SD 카드 이미지 파일을 제공합니다.
 
-### REPOSITORY REQUIREMENTS
+Github의 용량 제한으로 구글 드라이브에 별도로 올려 공유드리니, 위의 준비물 항목의 링크 참조 바랍니다.
 
-The present work has been developed and tested with Python 3.7.10, pytorch 1.9.0 and Ubuntu 18.04
-To reproduce our results we suggest to create a Python environment as follows.
+### 사용법
 
-```
-conda create --name evt python=3.7.10
-conda activate evt
-pip install -r requirements.txt
-```
+1. 이미지를 다운로드 후, sd카드 복원 프로그램 ([Etcher](https://etcher.balena.io/))를 통해 img 파일 내 내용물을 SD카드에 복사하십시오.
+2. SD카드를 라즈베리파이에 삽입하고, 전원을 인가하여 터미널에 접속하십시오.
+3. 미리 설치된 파일 중 `real_time_inference.py`를 실행시키면, 구현된 신경망을 바로 실행할 수 있습니다.
 
+## 신경망 학습
+해당 코드를 기반으로 새로운 프로젝트를 시작하고 싶으신 분들을 위해, 커스텀이 가능한 직접 설치 방법 또한 제공해드립니다. 직접 설치 이전에, 다음 작업들이 필요합니다.
 
+### 준비물
+- [train_env.yml](https://drive.google.com/file/d/1RNqYarMMfQSzsg_9ZS-AhjV9ssfrHW1d/view?usp=sharing) 파일
+- [Anaconda](https://www.anaconda.com/download) 최신 버전
+- NVIDIA 그래픽 카드
+- 우분투 22.04
+### 상세 과정
+1. Anaconda 설치.
+2. `conda create -n "evt2" --file env.yml`명령어 입력하여 필요 라이브러리 설치.
+3. `git clone https://github.com/Dictor/EventTransformer-ESW.git` 명령으로 Repository 클론.
+4. `git checkout on-rasp` 명령으로 최신 branch로 변경.
+5. `python train.py` 명령을 통해 학습 시작
 
-### PRETRAINED MODELS
+### 저장소 관리자 연락처
+본 저장소의 이용에 어려움이 있거나, 동작되지 않는 링크가 있으면 아래 연락처로 연락 부탁드립니다.
 
-The pretrained models must be located under a `./pretrained_models` directory and can be downloaded from Drive (
-[DVS128 10 classes](https://drive.google.com/file/d/184I-hOOyGwzsT9uPBUXrbhR2Trou0JJh/view?usp=sharing), 
-[DVS128 11 classes](https://drive.google.com/file/d/1pzvVgIC9aSpCjvl3IUQj_NT6JK-fJVHJ/view?usp=sharing), 
-[Sl-Animals 3-Sets](https://drive.google.com/file/d/1nDwVZQ5ivnyBSW1U3hH51ebv3nudDUQN/view?usp=sharing), 
-[Sl-Animals 4-Sets](https://drive.google.com/file/d/1BAM2DTbyqN_AUR0aIlHuJUuRl65xQKL6/view?usp=sharing), 
-[ASL-DVS](https://drive.google.com/file/d/1WqCcuLILKO1ACeGV4tj1KgP5Bdut8Pqe/view?usp=sharing)).
+- 김정현 (모델 학습) – kimdictor@gmail.com
+- 이주한 (데이터셋 생성 및 변환) – leejoohan9809@gmail.com
+- 신현호 (Google Drive Links) – tlsgusghq@kaist.ac.kr
 
-
-
-### DATA DOWNLOAD AND PRE-PROCESSING
-
-The datasets involved in the present work must be downloaded from their source and stored under a `./datasets` path:
- - DVS128: https://research.ibm.com/interactive/dvsgesture/
- - SL-Animals-DVS: http://www2.imse-cnm.csic.es/neuromorphs/index.php/SL-ANIMALS-DVS-Database
- - ASL: https://github.com/PIX2NVS/NVS2Graph
- - N-Caltech-101: https://www.garrickorchard.com/datasets/n-caltech101
-
-In order to have a faster training process we pre-process the source data by building intermediate sparse frame representations, that will be later loaded by our data generator.
-This transformation can be perfomed with the files located under `./dataset_scripts`.
-In the case of DVS128, it is mandatory to execute first `dvs128_split_dataset.py` and later `dvs128.py`.
-
-
-
-### EvT EVALUATION
-
-The evaluation of our pretrained models can be performed by executing: `python evaluation_stats.py`
-At the beginning of the file you can select the pretrained model to evaluate and the device where to evaluate it (CPU or GPU). Evaluation results include FLOPs, parameters, average activated patches, average processing time, and validation accuracy.
-
-
-
-### EvT TRAINING
-
-The training of a new model can be performed by executing: `python train.py`
-At the beginning of the file you can select the pretraining model from where to copy its training hyper-parameters.
-Note that, since the involved datasets do not contain many training samples and there is data augmentation involed in the training, final results might not be exactly equal than the ones reported in the article. If so, please perform several training executions.
+최종 작성자. 신현호
